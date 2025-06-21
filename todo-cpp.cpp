@@ -5,6 +5,8 @@
 
 using namespace std;
 
+void print_todo() { cout << "\033[1m" << "TODO" << "\033[0m" << endl; }
+
 int add(string path, string task);
 
 int list(string path);
@@ -23,8 +25,6 @@ int main(int argc, char** argv) {
     exit(2);
   }
 
-  cout << "\033[1m" << "TODO" << "\033[0m" << endl;  
-
   string command = argv[1];
 
   if (!command.compare("add")) {
@@ -36,10 +36,12 @@ int main(int argc, char** argv) {
       exit(i);
     }
   } else if (!command.compare("list")) {
+    print_todo();
     if(int i = list(path)) {
       exit(i);
     }
   } else if (!command.compare("listC")) {
+    print_todo();
     if(int i = listC(path)) {
       exit(i);
     } 
