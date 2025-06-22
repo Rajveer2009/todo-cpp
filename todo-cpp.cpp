@@ -13,6 +13,8 @@ int list(string path);
 
 int listC(string path);
 
+int listN(string path);
+
 int main(int argc, char** argv) {
   string path = getenv("TODO_PATH");
   if (path.empty()) {
@@ -45,6 +47,10 @@ int main(int argc, char** argv) {
     if(int i = listC(path)) {
       exit(i);
     } 
+  } else if (!command.compare("listN")) {
+    if (int i = listN(path)) {
+      exit(i);
+    }
   } else {
     cerr << "Commands: add, list, listC, listN, mark, remove, reset";
   }
@@ -102,4 +108,21 @@ int listC(string path) {
   }
 
   return 0;  
+}
+
+int listN(string path) {
+  ifstream f;
+  f.open(path);
+  if(!f.is_open()) {
+    return 1;
+  }
+
+  string line;
+  int i(1);
+  while(getline(f, line)) {
+    cout << i << ". " << line.substr(26, line.size()) << endl;
+    i++;
+  }
+
+  return 0;
 }
