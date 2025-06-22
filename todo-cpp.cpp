@@ -2,6 +2,7 @@
 #include <fstream>
 #include <iostream>
 #include <ctime>
+#include <vector>
 
 using namespace std;
 
@@ -14,6 +15,8 @@ int list(string path);
 int listC(string path);
 
 int listN(string path);
+
+int mark(string path, int n);
 
 int main(int argc, char** argv) {
   string path = getenv("TODO_PATH");
@@ -30,7 +33,7 @@ int main(int argc, char** argv) {
   string command = argv[1];
 
   if (!command.compare("add")) {
-    if (argc > 3) {
+    if (argc < 3) {
       exit(3);
     }
     string task = argv[2];
@@ -46,9 +49,17 @@ int main(int argc, char** argv) {
     print_todo();
     if(int i = listC(path)) {
       exit(i);
-    } 
+    }
   } else if (!command.compare("listN")) {
     if (int i = listN(path)) {
+      exit(i);
+    }
+  } else if (!command.compare("mark")) {
+    if (argc < 3) {
+      exit(1);
+    }
+    int line = atoi(argv[2]) - 1;
+    if (int i = mark(path, line)) {
       exit(i);
     }
   } else {
@@ -68,7 +79,7 @@ int add(string path, string task) {
   time_t t = time(0);
   char date_time[20];
   strftime(date_time, sizeof(date_time), "%d/%m/%Y %H:%M:%S", localtime(&t));
-  
+
   f << date_time << " - [ ] " << task << '\n';
 
   f.close();
@@ -85,7 +96,7 @@ int list(string path) {
 
   string line;
   while(getline(f, line)) {
-    cout << line.substr(20, line.size()) << endl; 
+    cout << line.substr(20) << endl;
   }
 
   f.close();
@@ -107,7 +118,7 @@ int listC(string path) {
     i++;
   }
 
-  return 0;  
+  return 0;
 }
 
 int listN(string path) {
@@ -120,9 +131,52 @@ int listN(string path) {
   string line;
   int i(1);
   while(getline(f, line)) {
-    cout << i << ". " << line.substr(26, line.size()) << endl;
+    cout << i << ". " << line.substr(26) << endl;
     i++;
   }
+
+  return 0;
+}
+
+int mark(string path, int n) {
+  vector<string> f_buf;
+  string l_buf;
+
+  ifstream f_i;
+  f_i.open(path);
+  if (!f_i.is_open()) {
+    return 1;
+  }
+
+  int n_l(0);
+  while(getline(f_i, l_buf)) {
+    f_buf.push_back(l_buf);
+    n_l++;
+  }
+  if (n > n_l-1) {
+    return 2;
+  }
+
+  f_i.close();
+
+  size_t pos1 = f_buf[n].find('[');
+  if (pos1 != string::npos && f_buf[n][pos1 + 2] == ']') {
+    f_buf[n][pos1 + 1] = 'x';
+  } else {
+    return 3;
+  }
+
+  ofstream f_o;
+  f_o.open(path);
+  if (!f_o.is_open()) {
+    return 1;
+  }
+
+  for (auto& line : f_buf) {
+    f_o << line << '\n';
+  }
+
+  f_o.close();
 
   return 0;
 }
