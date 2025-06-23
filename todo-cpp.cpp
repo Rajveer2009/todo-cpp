@@ -18,6 +18,10 @@ int listN(string path);
 
 int mark(string path, int n);
 
+int remove(string path, int n);
+
+int reset(string path);
+
 int main(int argc, char** argv) {
   string path = getenv("TODO_PATH");
   if (path.empty()) {
@@ -60,6 +64,18 @@ int main(int argc, char** argv) {
     }
     int line = atoi(argv[2]) - 1;
     if (int i = mark(path, line)) {
+      exit(i);
+    }
+  } else if (!command.compare("remove")) {
+    if (argc < 3) {
+      exit(1);
+    }
+    int line = atoi(argv[2] - 1);
+    if (int i = remove(path, line)) {
+      exit(i);
+    }
+  } else if (!command.compare("reset")) {
+    if(int i = reset(path)) {
       exit(i);
     }
   } else {
@@ -177,6 +193,56 @@ int mark(string path, int n) {
   }
 
   f_o.close();
+
+  return 0;
+}
+
+int remove(string path, int n) {
+  vector<string> f_buf;
+  string l_buf;
+
+  ifstream f_i;
+  f_i.open(path);
+  if (!f_i.is_open()) {
+    return 1;
+  }
+
+  int n_l(0);
+  while (getline(f_i, l_buf)) {
+    f_buf.push_back(l_buf);
+    n_l++;
+  }
+  if (n > n_l-1) {
+    return 2;
+  }
+
+  f_i.close();
+
+  f_buf.erase(f_buf.begin() + n);
+
+  ofstream f_o;
+  f_o.open(path);
+  if (!f_o.is_open()) {
+    return 1;
+  }
+
+  for (auto& line : f_buf) {
+    f_o << line << '\n';
+  }
+
+  f_o.close();
+
+  return 0;
+}
+
+int reset(string path) {
+  ofstream f;
+  f.open(path, ios::trunc);
+  if (!f.is_open()) {
+    return 1;
+  }
+
+  f.close();
 
   return 0;
 }
