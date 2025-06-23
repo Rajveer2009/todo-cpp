@@ -55,6 +55,7 @@ int main(int argc, char** argv) {
       exit(i);
     }
   } else if (!command.compare("listN")) {
+    print_todo();
     if (int i = listN(path)) {
       exit(i);
     }
