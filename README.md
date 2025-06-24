@@ -48,6 +48,13 @@ export TODO_PATH=~/todo.txt
 ./todo-cpp reset
 ```
 
+## 🛠️ Build
+To compile the program, run:
+
+```bash
+g++ -o todo-cpp todo-cpp.cpp
+```
+
 ## [License](LICENSE.md)
 
 `Copyright (C) 2025 Rajveer Singh Saggu`
